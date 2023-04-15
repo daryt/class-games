@@ -63,56 +63,78 @@ const App = () => {
   };
 
   return (
-    <Flex flexDirection="column" alignItems="center" height="100vh">
+    <Flex flexDirection="column" alignItems="center" minHeight="100vh">
       <Flex
         id="header"
-        height={"15vh"}
+        marginTop={{ base: "5vh", md: "0" }}
+        height={{ base: "10vh", md: "15vh" }}
         width="100%"
         textAlign="center"
         alignItems="center"
         justifyContent="center"
       >
-        <Header label="Classroom Noise Challenge" size="3xl" />
+        <Header
+          label="Classroom Noise Challenge"
+          size={{ base: "2xl", md: "3xl" }}
+        />
       </Flex>
       <Flex
         id="body"
         alignItems="center"
         justifyContent="space-between"
+        direction={{ base: "column", md: "row" }}
         width={{ base: "90%", md: "75%" }}
         flexGrow={1}
       >
         <Box
           id="left-side"
-          height={"80%"}
+          height={{ base: "30%", md: "80%" }}
           flexGrow={1}
-          display={{ base: "none", md: "block" }}
+          display={{ base: "block", md: "block" }}
         >
-          <TrafficLight
-            style={{
-              height: "70vh",
-              minWidth: "30vw",
-              maxWidth: "60vw",
-            }}
-            RedOn={trafficLightColor === "red"}
-            YellowOn={trafficLightColor === "yellow"}
-            GreenOn={trafficLightColor === "green"}
-          />
+          <Box
+            height={{ base: "40vh", md: "75vh" }}
+            width={{ base: "30vw", md: "50vh" }}
+          >
+            <TrafficLight
+              style={{
+                height: "100%",
+                width: "100%",
+              }}
+              RedOn={trafficLightColor === "red"}
+              YellowOn={trafficLightColor === "yellow"}
+              GreenOn={trafficLightColor === "green"}
+            />
+          </Box>
         </Box>
-        <Box id="right-side" height={"80%"} flexGrow={1} p="1rem">
+        <Box
+          id="right-side"
+          height={{ base: "50%", md: "80%" }}
+          flexGrow={1}
+          p="1rem"
+        >
           <VStack
             spacing={4}
             justifyContent="space-between"
-            alignItems="flex-start"
+            alignItems={{ base: "center", md: "flex-start" }}
+            width="100%"
           >
-            <Text fontSize="xl">
+            <Text fontSize={{ base: "md", md: "2xl" }} textAlign="center">
               {`Earn ${addPoints} point(s) for every ${minutesToString(
                 timeInGreen
               )} in the green. Lose ${losePoints} point(s)
-              for every red alert.`}
+          for every red alert.`}
             </Text>
-            <Box height="5px" width="100%" backgroundColor="gray.200" />
-            <Text fontSize="8xl">{formatDuration(elapsedTime)}</Text>
-            <Flex width="200px" justifyContent="space-between">
+            <Box height="3px" width="100%" backgroundColor="gray.200" />
+            <Text fontSize={{ base: "6xl", md: "8xl" }}>
+              {formatDuration(elapsedTime)}
+            </Text>
+            <Flex
+              width="200px"
+              justifyContent="space-between"
+              alignItems="center"
+              m="0 auto"
+            >
               <Tooltip
                 label={
                   isActive ? STOP_RECORDING_TOOLTIP : START_RECORDING_TOOLTIP
@@ -132,9 +154,22 @@ const App = () => {
                 </Button>
               </Tooltip>
             </Flex>
-            <Flex justifyContent="space-between" width="55%">
-              <Text fontSize="5xl">Score: {points}</Text>
-              <Text fontSize="5xl">Goal: {goal}</Text>
+            <Flex
+              justifyContent="space-between"
+              alignItems="center"
+              width={{ base: "100%", md: "70%", lg: "45%" }}
+              m="0 auto"
+            >
+              <Text
+                fontSize={{ base: "4xl", md: "5xl" }}
+                textAlign="center"
+                mb={{ base: 2, md: 0 }}
+              >
+                Score: {points}
+              </Text>
+              <Text fontSize={{ base: "4xl", md: "5xl" }} textAlign="center">
+                Goal: {goal}
+              </Text>
             </Flex>
           </VStack>
         </Box>
