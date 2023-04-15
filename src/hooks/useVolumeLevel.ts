@@ -4,33 +4,37 @@ const useVolumeLevel = () => {
   const [audio, setAudio] = useState<MediaStream | null>();
   const [audioContext, setAudioContext] = useState<AudioContext>();
   const [analyser, setAnalyser] = useState<AnalyserNode>();
-  const [dataArray, setDataArray] = useState<Uint8Array>(new Uint8Array(0));
+  const [dataArray, setDataArray] = useState<Float32Array>(new Float32Array(0));
   const [source, setSource] = useState<MediaStreamAudioSourceNode>();
   const [soundLevel, setLevel] = useState(0);
-
+  
   const isActive = audio?.active == true;
 
   const alpha = 0.1; // Smoothing factor for exponential moving average
   const rafId = useRef<number | null>(null);
 
+  const referencePower = 1e-12; // Reference power level
+
   const frequencyHandler = () => {
     if (!rafId.current) {
       return;
     }
-    analyser?.getByteFrequencyData(dataArray);
-    let sumSquares = 0.0;
+    analyser?.getFloatTimeDomainData(dataArray);
+    let sumPower = 0.0;
     for (const amplitude of dataArray) {
-      sumSquares += amplitude * amplitude;
+      const power = Math.pow(amplitude / 255, 2);
+      sumPower += power;
     }
-    const newSoundLevel = Math.sqrt(sumSquares / dataArray.length);
+    
+    const powerRatio = sumPower / dataArray.length / referencePower;
+    const newSoundLevelInDb = 10 * Math.log10(powerRatio);
 
-    // Update the sound level using exponential moving average
-    const smoothedSoundLevel = alpha * newSoundLevel + (1 - alpha) * soundLevel;
-    setLevel(Math.round(smoothedSoundLevel));
+    const smoothedSoundLevel = alpha * newSoundLevelInDb + (1 - alpha) * soundLevel;
+    // Use Math.max() to set a lower bound of 0, and scale the result to better match the reference
+    setLevel(Math.round(Math.max(smoothedSoundLevel * 10, 0)));
 
     window.requestAnimationFrame(frequencyHandler);
   };
-
   const stopRecording = useCallback(() => {
     audio?.getTracks().forEach((track) => track.stop());
     setAudio(null);
@@ -54,10 +58,10 @@ const useVolumeLevel = () => {
     setAudioContext(newAudioContext);
 
     const newAnalyser = newAudioContext.createAnalyser();
-    newAnalyser.fftSize = 256;
+    newAnalyser.fftSize = 2048;
     setAnalyser(newAnalyser);
 
-    setDataArray(new Uint8Array(newAnalyser.frequencyBinCount));
+    setDataArray(new Float32Array(newAnalyser.frequencyBinCount));
 
     const newSource = newAudioContext.createMediaStreamSource(audio);
     setSource(newSource);

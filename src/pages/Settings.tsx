@@ -8,6 +8,7 @@ import {
   Input,
   Text,
   VStack,
+  Link,
 } from "@chakra-ui/react";
 import SoundSelector from "../components/SoundSelector";
 import Header from "../components/Header/index";
@@ -91,7 +92,7 @@ const Settings = () => {
           <form onSubmit={handleSubmit}>
             <Flex wrap="wrap" justifyContent="space-between">
               <Box width={["100%", "48%"]} marginBottom="1rem">
-                <VStack spacing={3} alignItems="flex-start">
+                <VStack spacing={2} alignItems="flex-start">
                   <Text fontSize="xl" fontWeight="bold">
                     Point Settings
                   </Text>
@@ -140,7 +141,7 @@ const Settings = () => {
                 </VStack>
               </Box>
               <Box width={["100%", "48%"]} marginBottom="1rem">
-                <VStack spacing={3} alignItems="flex-start">
+                <VStack spacing={2} alignItems="flex-start">
                   <Text fontSize="xl" fontWeight="bold">
                     Timer Settings
                   </Text>
@@ -161,7 +162,7 @@ const Settings = () => {
                 </VStack>
               </Box>
               <Box width={["100%", "48%"]} marginBottom="1rem">
-                <VStack spacing={3} alignItems="flex-start">
+                <VStack spacing={2} alignItems="flex-start">
                   <Text fontSize="xl" fontWeight="bold">
                     Threshold Settings
                   </Text>
@@ -193,7 +194,7 @@ const Settings = () => {
                       required
                     />
                   </FormControl>
-                  <FormControl id="yellow-min-dec">
+                  <FormControl id="microphone-test">
                     <FormLabel m={0}>Microphone Test</FormLabel>
                     <Text fontSize="xs" color="gray.500">
                       Use this test to determine the baseline noise level in
@@ -220,7 +221,7 @@ const Settings = () => {
                 </VStack>
               </Box>
               <Box width={["100%", "48%"]} marginBottom="1rem">
-                <VStack spacing={3} alignItems="flex-start">
+                <VStack spacing={2} alignItems="flex-start">
                   <Text fontSize="xl" fontWeight="bold">
                     Sound Settings
                   </Text>
@@ -264,7 +265,20 @@ const Settings = () => {
                 </VStack>
               </Box>
             </Flex>
-            <Flex justifyContent="center" marginBottom=".5rem">
+            <Link
+              fontSize="sm"
+              color="teal.500"
+              href="https://www.cdc.gov/nceh/hearing_loss/what_noises_cause_hearing_loss.html"
+              isExternal
+            >
+              Decibel Hearing Chart
+            </Link>
+            <Text fontSize="xs" color="gray.500" marginBottom=".5rem">
+              Please note that the accuracy of the decibel readings provided by
+              this application may be affected by the quality of your device's
+              microphone.
+            </Text>
+            <Flex justifyContent="center" marginBottom=".2rem">
               <Button
                 colorScheme={"green"}
                 isDisabled={!isDirty || isFormEmptyOrNull}
