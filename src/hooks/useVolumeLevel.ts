@@ -1,13 +1,15 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 
 const useVolumeLevel = () => {
+  const windowSize = 100 // This helps essentially 'smooth' out the fluctuations.
   const [audio, setAudio] = useState<MediaStream | null>();
   const [audioContext, setAudioContext] = useState<AudioContext>();
   const [analyser, setAnalyser] = useState<AnalyserNode>();
   const [dataArray, setDataArray] = useState<Float32Array>(new Float32Array(0));
   const [source, setSource] = useState<MediaStreamAudioSourceNode>();
   const [soundLevel, setLevel] = useState(0);
-  
+  const [recentLevels, setRecentLevels] = useState<number[]>([]);
+
   const isActive = audio?.active == true;
 
   const alpha = 0.1; // Smoothing factor for exponential moving average
@@ -25,16 +27,24 @@ const useVolumeLevel = () => {
       const power = Math.pow(amplitude / 255, 2);
       sumPower += power;
     }
-    
+
     const powerRatio = sumPower / dataArray.length / referencePower;
     const newSoundLevelInDb = 10 * Math.log10(powerRatio);
 
     const smoothedSoundLevel = alpha * newSoundLevelInDb + (1 - alpha) * soundLevel;
-    // Use Math.max() to set a lower bound of 0, and scale the result to better match the reference
-    setLevel(Math.round(Math.max(smoothedSoundLevel * 10, 0)));
+
+    const newLevel = Math.round(Math.max(smoothedSoundLevel * 10, 0));
+
+    setRecentLevels((prevLevels) => {
+      const newRecentLevels = [...prevLevels, newLevel].slice(-windowSize);
+      setLevel(newRecentLevels.reduce((a, b) => a + b) / newRecentLevels.length);
+      return newRecentLevels;
+    });
 
     window.requestAnimationFrame(frequencyHandler);
   };
+
+
   const stopRecording = useCallback(() => {
     audio?.getTracks().forEach((track) => track.stop());
     setAudio(null);

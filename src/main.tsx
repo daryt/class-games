@@ -6,6 +6,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { SettingsProvider } from "./context/settingsContext";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import initialSettings from "./settings.json";
+import useLocalStorage from "./hooks/useLocalStorage";
 
 const router = createBrowserRouter([
   {
@@ -21,7 +22,7 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <ChakraProvider>
-      <SettingsProvider initialSettings={initialSettings}>
+      <SettingsProvider>
         <RouterProvider router={router} />
       </SettingsProvider>
     </ChakraProvider>

@@ -1,4 +1,6 @@
 import { createContext, useState, ReactNode, useMemo, useContext } from "react";
+import useLocalStorage from "../hooks/useLocalStorage";
+import initialSettings from "../settings.json";
 
 // Settings Interface
 interface ISettings {
@@ -12,6 +14,7 @@ interface ISettings {
   readonly alertSoundRed: string;
   readonly alertSoundYellow: string;
   readonly cooldownPeriod: number;
+  readonly averageWindowSize: number;
 }
 
 // Define the shape of the user details state
@@ -25,12 +28,13 @@ const SettingsContext = createContext<SettingsContextState | undefined>(
 );
 
 interface UserProviderProps {
-  initialSettings: ISettings;
   children: ReactNode;
 }
 
-function SettingsProvider({ initialSettings, children }: UserProviderProps) {
-  const [settings, setSettings] = useState(initialSettings);
+function SettingsProvider({ children }: UserProviderProps) {
+  const [storedSettings] = useLocalStorage("settings", initialSettings);
+
+  const [settings, setSettings] = useState(storedSettings);
 
   const values = useMemo(
     () => ({
