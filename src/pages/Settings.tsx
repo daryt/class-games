@@ -13,6 +13,7 @@ import {
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
+  Checkbox,
   FormHelperText,
 } from "@chakra-ui/react";
 import SoundSelector from "../components/SoundSelector";
@@ -32,6 +33,7 @@ interface IFormValues {
   alertSoundYellow: string;
   cooldownPeriod: number;
   averageWindowSize: number;
+  isDebug: boolean;
 }
 
 interface ISettings {
@@ -212,6 +214,30 @@ const ThresholdSettings = ({ formValues, handleChange }: ISettings) => (
   </>
 );
 
+const AdvancedSettings = ({ formValues, handleChange }: ISettings) => {
+  console.log(formValues);
+  return (
+    <>
+      <Text fontSize="xl" fontWeight="bold">
+        Advanced Settings
+      </Text>
+      <FormControl id="red-min-dec">
+        <FormLabel m={0}>Debug Mode</FormLabel>
+        <Text fontSize="xs" color="gray.500">
+          Use this mode to display the sound level on the main page.
+        </Text>
+        <Checkbox
+          name="isDebug"
+          isChecked={formValues.isDebug || false}
+          onChange={handleChange}
+        >
+          Debug Mode
+        </Checkbox>
+      </FormControl>
+    </>
+  );
+};
+
 const Settings = () => {
   const { settings, setSettings } = useSettingsContext();
   const [_, setValue] = useLocalStorage("settings");
@@ -227,6 +253,7 @@ const Settings = () => {
     alertSoundYellow,
     cooldownPeriod,
     averageWindowSize,
+    isDebug,
   } = settings;
 
   const [formValues, setFormValues] = useState({
@@ -240,6 +267,7 @@ const Settings = () => {
     alertSoundYellow,
     cooldownPeriod,
     averageWindowSize,
+    isDebug,
   });
 
   // Method to determine when the form has been modified.
@@ -318,6 +346,17 @@ const Settings = () => {
                 <ThresholdSettings
                   formValues={formValues}
                   handleChange={handleChange}
+                />
+              </Box>
+              <Box>
+                <AdvancedSettings
+                  formValues={formValues}
+                  handleChange={() =>
+                    setFormValues((prevState) => ({
+                      ...prevState,
+                      isDebug: !prevState.isDebug,
+                    }))
+                  }
                 />
               </Box>
             </Grid>

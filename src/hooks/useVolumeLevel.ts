@@ -97,6 +97,12 @@ const useVolumeLevel = () => {
     }
   }, [audioContext]);
 
+  useEffect(()=>{
+    if(settings.isDebug){
+      console.log(recentLevels)
+    }
+  }, [soundLevel])
+
   return { startRecording, stopRecording, isActive, soundLevel };
 };
 

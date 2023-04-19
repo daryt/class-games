@@ -8,6 +8,7 @@
     "cooldownPeriod": 1,
     "averageWindowSize": 120,
     "alertSoundRed": "be-quiet.mp3",
-    "alertSoundYellow": "shh.mp3"
+    "alertSoundYellow": "shh.mp3",
+    "isDebug": false
 }
   

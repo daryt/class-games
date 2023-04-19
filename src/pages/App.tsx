@@ -217,6 +217,18 @@ const App = () => {
                 Goal: {goal}
               </Text>
             </Flex>
+            <Flex
+              justifyContent="center"
+              alignItems="center"
+              width={{ base: "100%", md: "70%", lg: "45%" }}
+              m="0 auto"
+            >
+              {settings.isDebug && (
+                <Text fontSize={{ base: "2xl", md: "3xl" }} textAlign="center">
+                  Sound: {soundLevel.toFixed(0)}
+                </Text>
+              )}
+            </Flex>
           </VStack>
         </Box>
       </Flex>
