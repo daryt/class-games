@@ -10,7 +10,6 @@ interface ISettings {
   readonly redMinDec: number;
   readonly yellowMinDec: number;
   readonly goal: number;
-  readonly rollingWindow: number;
   readonly alertSoundRed: string;
   readonly alertSoundYellow: string;
   readonly cooldownPeriod: number;

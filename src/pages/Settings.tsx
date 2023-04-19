@@ -30,7 +30,6 @@ interface IFormValues {
   goal: number;
   alertSoundRed: string;
   alertSoundYellow: string;
-  rollingWindow: number;
   cooldownPeriod: number;
   averageWindowSize: number;
 }
@@ -226,7 +225,6 @@ const Settings = () => {
     goal,
     alertSoundRed,
     alertSoundYellow,
-    rollingWindow,
     cooldownPeriod,
     averageWindowSize,
   } = settings;
@@ -240,7 +238,6 @@ const Settings = () => {
     goal,
     alertSoundRed,
     alertSoundYellow,
-    rollingWindow,
     cooldownPeriod,
     averageWindowSize,
   });

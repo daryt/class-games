@@ -1,7 +1,8 @@
 import { useState, useCallback, useEffect, useRef } from "react";
+import { useSettingsContext } from "../context/settingsContext";
 
 const useVolumeLevel = () => {
-  const windowSize = 100 // This helps essentially 'smooth' out the fluctuations.
+  const {settings} = useSettingsContext()
   const [audio, setAudio] = useState<MediaStream | null>();
   const [audioContext, setAudioContext] = useState<AudioContext>();
   const [analyser, setAnalyser] = useState<AnalyserNode>();
@@ -36,10 +37,12 @@ const useVolumeLevel = () => {
     const newLevel = Math.round(Math.max(smoothedSoundLevel * 10, 0));
 
     setRecentLevels((prevLevels) => {
-      const newRecentLevels = [...prevLevels, newLevel].slice(-windowSize);
-      setLevel(newRecentLevels.reduce((a, b) => a + b) / newRecentLevels.length);
+      const newRecentLevels = [...prevLevels, newLevel].slice(-settings.averageWindowSize);
+      const averageSound = newRecentLevels.reduce((a, b) => a + b) / newRecentLevels.length
+      setLevel(averageSound);
       return newRecentLevels;
     });
+
 
     window.requestAnimationFrame(frequencyHandler);
   };
@@ -72,7 +75,7 @@ const useVolumeLevel = () => {
     setAnalyser(newAnalyser);
 
     setDataArray(new Float32Array(newAnalyser.frequencyBinCount));
-
+    setRecentLevels(new Array(settings.averageWindowSize).fill(0))
     const newSource = newAudioContext.createMediaStreamSource(audio);
     setSource(newSource);
 
