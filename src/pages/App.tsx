@@ -8,11 +8,13 @@ import {
   formatDuration,
   minutesToString,
   minutesToMilliseconds,
+  calculateDecreaseRatio,
 } from "../utils/index";
 import { useSettingsContext } from "../context/settingsContext";
 import useSound from "use-sound";
 import alert from "../assets/sounds/alert/be-quiet.mp3";
 import warning from "../assets/sounds/warning/shh.mp3";
+import Confetti from "react-confetti";
 
 const START_RECORDING_TOOLTIP = "Start the timer";
 const STOP_RECORDING_TOOLTIP = "Stop the timer";
@@ -23,9 +25,15 @@ const App = () => {
   const { goal, addPoints, losePoints, timeInGreen } = settings;
   const { startRecording, stopRecording, isActive, soundLevel } =
     useVolumeLevel();
-  const { points, trafficLightColor, reset, elapsedTime } = useGameLogic({
-    isActive,
-    soundLevel,
+  const { points, trafficLightColor, reset, elapsedTime, isGameWon } =
+    useGameLogic({
+      isActive,
+      soundLevel,
+    });
+
+  const [confetti, setConfetti] = useState({
+    run: false,
+    numberOfPieces: 200,
   });
 
   // Sounds
@@ -59,11 +67,49 @@ const App = () => {
 
   const handleReset = () => {
     setLastPlayed({ red: 0, yellow: 0 });
+    setConfetti((prevState) => ({
+      ...prevState,
+      numberOfPieces: 200,
+      run: false,
+    }));
     reset();
   };
 
+  // Confetti when game was won
+  useEffect(() => {
+    if (isGameWon) {
+      setConfetti((prevState) => ({ ...prevState, run: true }));
+    }
+  }, [isGameWon]);
+
+  // Clear confetti effect
+  useEffect(() => {
+    if (confetti.run) {
+      const confettiInterval = setInterval(() => {
+        setConfetti((prevState) => {
+          const decreaseRatio = calculateDecreaseRatio(
+            prevState.numberOfPieces,
+            200
+          );
+          const newNumberOfPieces =
+            prevState.numberOfPieces - prevState.numberOfPieces * decreaseRatio;
+          if (newNumberOfPieces <= 0) {
+            clearInterval(confettiInterval);
+            return { ...prevState, numberOfPieces: 200, run: false };
+          }
+          return { ...prevState, numberOfPieces: newNumberOfPieces };
+        });
+      }, 1000);
+
+      return () => {
+        clearInterval(confettiInterval);
+      };
+    }
+  }, [confetti.run]);
+
   return (
     <Flex flexDirection="column" alignItems="center" minHeight="100vh">
+      {confetti.run && <Confetti {...confetti} />}
       <Flex
         id="header"
         marginTop={{ base: "5vh", md: "0" }}

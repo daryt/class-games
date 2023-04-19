@@ -28,3 +28,8 @@ export const minutesToMilliseconds = (minutes: number) => {
   const milliseconds = seconds * 1000;
   return milliseconds;
 }
+
+export const calculateDecreaseRatio = (currentNumberOfPieces: number, maxNumberOfPieces: number) => {
+  const ratio = 1 - (currentNumberOfPieces / maxNumberOfPieces);
+  return 0.1 + ratio * 0.8;
+};
