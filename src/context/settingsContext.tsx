@@ -15,6 +15,7 @@ interface ISettings {
   readonly cooldownPeriod: number;
   readonly averageWindowSize: number;
   readonly isDebug: boolean;
+  readonly soundDelay: number;
 }
 
 // Define the shape of the user details state

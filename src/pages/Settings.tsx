@@ -34,6 +34,7 @@ interface IFormValues {
   cooldownPeriod: number;
   averageWindowSize: number;
   isDebug: boolean;
+  soundDelay: number;
 }
 
 interface ISettings {
@@ -175,6 +176,19 @@ const SoundSettings = ({ formValues, handleChange }: ISettings) => (
         onChange={handleChange}
       />
     </FormControl>
+    <FormControl id="alert-sound-delay">
+      <FormLabel m={0}>Sound Delay</FormLabel>
+      <Text fontSize="xs" color="gray.500">
+        Add a delay to the alert sound.
+      </Text>
+      <Input
+        type="number"
+        name="soundDelay"
+        value={formValues.soundDelay}
+        onChange={handleChange}
+        required
+      />
+    </FormControl>
   </>
 );
 
@@ -254,6 +268,7 @@ const Settings = () => {
     cooldownPeriod,
     averageWindowSize,
     isDebug,
+    soundDelay,
   } = settings;
 
   const [formValues, setFormValues] = useState({
@@ -268,6 +283,7 @@ const Settings = () => {
     cooldownPeriod,
     averageWindowSize,
     isDebug,
+    soundDelay,
   });
 
   // Method to determine when the form has been modified.

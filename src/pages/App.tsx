@@ -52,25 +52,48 @@ const App = () => {
   const prevTrafficLightColor = useRef(trafficLightColor);
 
   useEffect(() => {
+    let warningTimeoutId: number;
+    let alertTimeoutId: number;
+
     if (trafficLightColor !== prevTrafficLightColor.current) {
+      const soundDelayMilliseconds = settings.soundDelay * 1000;
+
       if (
         trafficLightColor === "yellow" &&
         Date.now() - lastPlayed.yellow >=
           minutesToMilliseconds(settings.cooldownPeriod)
       ) {
-        playWarning();
-        setLastPlayed((prevState) => ({ ...prevState, yellow: Date.now() }));
+        warningTimeoutId = setTimeout(() => {
+          if (trafficLightColor === "yellow") {
+            playWarning();
+            setLastPlayed((prevState) => ({
+              ...prevState,
+              yellow: Date.now(),
+            }));
+          }
+        }, soundDelayMilliseconds);
+        console.log(warningTimeoutId);
       } else if (
         trafficLightColor === "red" &&
         Date.now() - lastPlayed.red >=
           minutesToMilliseconds(settings.cooldownPeriod)
       ) {
-        playAlert();
-        setLastPlayed((prevState) => ({ ...prevState, red: Date.now() }));
+        alertTimeoutId = setTimeout(() => {
+          if (trafficLightColor === "red") {
+            playAlert();
+            setLastPlayed((prevState) => ({ ...prevState, red: Date.now() }));
+          }
+        }, soundDelayMilliseconds);
       }
     }
 
     prevTrafficLightColor.current = trafficLightColor;
+    return () => {
+      // This helps reset the delayed sound if the light changes color
+      // before the soudn plays.
+      clearTimeout(warningTimeoutId);
+      clearTimeout(alertTimeoutId);
+    };
   }, [trafficLightColor]);
 
   const handleReset = () => {

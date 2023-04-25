@@ -6,6 +6,7 @@
     "yellowMinDec": 40,
     "goal": 10,
     "cooldownPeriod": 1,
+    "soundDelay": 5,
     "averageWindowSize": 120,
     "alertSoundRed": "be-quiet.mp3",
     "alertSoundYellow": "shh.mp3",
