@@ -23,6 +23,8 @@ const RESET_TOOLTIP = "Reset the score and time";
 const App = () => {
   const { settings } = useSettingsContext();
   const { goal, addPoints, losePoints, timeInGreen } = settings;
+  // Add this into settings later.
+  const keepConfettiUntilStop = true;
   const { startRecording, stopRecording, isActive, soundLevel } =
     useVolumeLevel();
   const { points, trafficLightColor, reset, elapsedTime, isGameWon } =
@@ -30,6 +32,12 @@ const App = () => {
       isActive,
       soundLevel,
     });
+
+  const handleStopRecording = () => {
+    // Any actions to occur when the user clicks the Stop button.
+    setConfetti((prevState) => ({ ...prevState, run: false }));
+    stopRecording();
+  };
 
   const [confetti, setConfetti] = useState({
     run: false,
@@ -84,7 +92,7 @@ const App = () => {
 
   // Clear confetti effect
   useEffect(() => {
-    if (confetti.run) {
+    if (confetti.run && !keepConfettiUntilStop) {
       const confettiInterval = setInterval(() => {
         setConfetti((prevState) => {
           const decreaseRatio = calculateDecreaseRatio(
@@ -189,7 +197,7 @@ const App = () => {
                 <Button
                   size="lg"
                   colorScheme={isActive ? "red" : "green"}
-                  onClick={isActive ? stopRecording : startRecording}
+                  onClick={isActive ? handleStopRecording : startRecording}
                 >
                   {isActive ? "Stop" : "Start"}
                 </Button>
