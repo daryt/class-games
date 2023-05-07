@@ -35,6 +35,7 @@ interface IFormValues {
   averageWindowSize: number;
   isDebug: boolean;
   soundDelay: number;
+  timer: number;
 }
 
 interface ISettings {
@@ -98,6 +99,19 @@ const PointSettings = ({ formValues, handleChange }: ISettings) => (
         type="number"
         name="timeInGreen"
         value={formValues.timeInGreen}
+        onChange={handleChange}
+        required
+      />
+    </FormControl>
+    <FormControl id="timer">
+      <FormLabel m={0}>Timer (minutes)</FormLabel>
+      <Text fontSize="xs" color="gray.500">
+        Represents the time the timer starts at.
+      </Text>
+      <Input
+        type="number"
+        name="timer"
+        value={formValues.timer}
         onChange={handleChange}
         required
       />
@@ -229,7 +243,6 @@ const ThresholdSettings = ({ formValues, handleChange }: ISettings) => (
 );
 
 const AdvancedSettings = ({ formValues, handleChange }: ISettings) => {
-  console.log(formValues);
   return (
     <>
       <Text fontSize="xl" fontWeight="bold">
@@ -269,6 +282,7 @@ const Settings = () => {
     averageWindowSize,
     isDebug,
     soundDelay,
+    timer,
   } = settings;
 
   const [formValues, setFormValues] = useState({
@@ -284,6 +298,7 @@ const Settings = () => {
     averageWindowSize,
     isDebug,
     soundDelay,
+    timer,
   });
 
   // Method to determine when the form has been modified.

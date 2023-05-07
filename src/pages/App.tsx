@@ -23,6 +23,8 @@ const RESET_TOOLTIP = "Reset the score and time";
 const App = () => {
   const { settings } = useSettingsContext();
   const { goal, addPoints, losePoints, timeInGreen } = settings;
+  const [isTimer, setIsTimer] = useState(false);
+
   // Add this into settings later.
   const keepConfettiUntilStop = true;
   const { startRecording, stopRecording, isActive, soundLevel } =
@@ -51,6 +53,12 @@ const App = () => {
   const [lastPlayed, setLastPlayed] = useState({ red: 0, yellow: 0 });
   const prevTrafficLightColor = useRef(trafficLightColor);
 
+  // Sets timer/stopwatch
+  const toggleTimer = () => {
+    setIsTimer(!isTimer);
+    reset();
+  };
+
   useEffect(() => {
     let warningTimeoutId: number;
     let alertTimeoutId: number;
@@ -72,7 +80,6 @@ const App = () => {
             }));
           }
         }, soundDelayMilliseconds);
-        console.log(warningTimeoutId);
       } else if (
         trafficLightColor === "red" &&
         Date.now() - lastPlayed.red >=
@@ -105,6 +112,15 @@ const App = () => {
     }));
     reset();
   };
+
+  // Timer logic
+  useEffect(() => {
+    // If using timer, stop game once time reaches 0.
+    const time = settings.timer * 60 - elapsedTime;
+    if (isTimer && time == 0) {
+      handleStopRecording();
+    }
+  }, [isTimer, elapsedTime]);
 
   // Confetti when game was won
   useEffect(() => {
@@ -203,8 +219,15 @@ const App = () => {
           for every red alert.`}
             </Text>
             <Box height="3px" width="100%" backgroundColor="gray.200" />
+            <Tooltip label="Switch timer/stopwatch">
+              <Button size="lg" onClick={toggleTimer}>
+                {isTimer ? "Stopwatch" : "Timer"}
+              </Button>
+            </Tooltip>
             <Text fontSize={{ base: "6xl", md: "8xl" }}>
-              {formatDuration(elapsedTime)}
+              {isTimer
+                ? formatDuration(settings.timer * 60 - elapsedTime)
+                : formatDuration(elapsedTime)}
             </Text>
             <Flex
               width="200px"
