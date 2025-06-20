@@ -50,32 +50,40 @@ const useGameLogic = ({ isActive, soundLevel }: TrafficLightProps) => {
       // TODO: Lose points for every X seconds in red.
       // Lose points for every time it hits red
       setPoints((prevPoints) =>
-        prevPoints === 0 ? 0 : prevPoints - settings.losePoints,
+        prevPoints === 0 ? 0 : prevPoints - settings.losePoints
       );
       resetGreenCounter();
     }
   }, [trafficLightColor, settings.losePoints, isActive]);
 
   /**
-   * Starts global timer and increments points whenever the traffic light stays
-   * in the green. Timers pause when the light turns yellow or red.
+   * Starts and stops the global timer whenever the game is active or inactive.
+   * The timer keeps running even if the light turns yellow or red.
    */
   useEffect(() => {
-    if (isActive && trafficLightColor === "green") {
+    if (isActive) {
       globalTimerId.current = setInterval(() => {
         setElapsedTime((prevElapsedTime) => prevElapsedTime + 1);
       }, 1000);
-
-      localIntervalId.current = setInterval(() => {
-        setPoints((prevPoints) => prevPoints + settings.addPoints);
-      }, settings.timeInGreen * 60000);
-    } else {
-      clearInterval(globalTimerId.current as number);
-      clearInterval(localIntervalId.current as number);
     }
 
     return () => {
       clearInterval(globalTimerId.current as number);
+    };
+  }, [isActive]);
+
+  /**
+   * Awards points while the light stays green. The interval is cleared whenever
+   * the light changes or the game stops.
+   */
+  useEffect(() => {
+    if (isActive && trafficLightColor === "green") {
+      localIntervalId.current = setInterval(() => {
+        setPoints((prevPoints) => prevPoints + settings.addPoints);
+      }, settings.timeInGreen * 60000);
+    }
+
+    return () => {
       clearInterval(localIntervalId.current as number);
     };
   }, [isActive, trafficLightColor, settings.addPoints, settings.timeInGreen]);
@@ -123,7 +131,7 @@ const useGameLogic = ({ isActive, soundLevel }: TrafficLightProps) => {
    */
   const resetGlobalCounter = () => {
     clearInterval(globalTimerId.current as number);
-    if (isActive && trafficLightColor === "green") {
+    if (isActive) {
       globalTimerId.current = setInterval(() => {
         setElapsedTime((prevElapsedTime) => prevElapsedTime + 1);
       }, 1000);
