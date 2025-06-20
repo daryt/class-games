@@ -50,18 +50,18 @@ const useGameLogic = ({ isActive, soundLevel }: TrafficLightProps) => {
       // TODO: Lose points for every X seconds in red.
       // Lose points for every time it hits red
       setPoints((prevPoints) =>
-        prevPoints === 0 ? 0 : prevPoints - settings.losePoints
+        prevPoints === 0 ? 0 : prevPoints - settings.losePoints,
       );
       resetGreenCounter();
     }
   }, [trafficLightColor, settings.losePoints, isActive]);
 
   /**
-   * Starts global timer and increments points whenever the traffic light stays in the green.
+   * Starts global timer and increments points whenever the traffic light stays
+   * in the green. Timers pause when the light turns yellow or red.
    */
   useEffect(() => {
     if (isActive && trafficLightColor === "green") {
-      // Starts timer for time spent in green
       globalTimerId.current = setInterval(() => {
         setElapsedTime((prevElapsedTime) => prevElapsedTime + 1);
       }, 1000);
@@ -69,12 +69,16 @@ const useGameLogic = ({ isActive, soundLevel }: TrafficLightProps) => {
       localIntervalId.current = setInterval(() => {
         setPoints((prevPoints) => prevPoints + settings.addPoints);
       }, settings.timeInGreen * 60000);
+    } else {
+      clearInterval(globalTimerId.current as number);
+      clearInterval(localIntervalId.current as number);
     }
+
     return () => {
       clearInterval(globalTimerId.current as number);
       clearInterval(localIntervalId.current as number);
     };
-  }, [isActive]);
+  }, [isActive, trafficLightColor, settings.addPoints, settings.timeInGreen]);
 
   /*
     Determines whens the user has won the game.
@@ -107,9 +111,11 @@ const useGameLogic = ({ isActive, soundLevel }: TrafficLightProps) => {
    */
   const resetGreenCounter = () => {
     clearInterval(localIntervalId.current as number);
-    localIntervalId.current = setInterval(() => {
-      setPoints((prevPoints) => prevPoints + settings.addPoints);
-    }, settings.timeInGreen * 60000);
+    if (isActive && trafficLightColor === "green") {
+      localIntervalId.current = setInterval(() => {
+        setPoints((prevPoints) => prevPoints + settings.addPoints);
+      }, settings.timeInGreen * 60000);
+    }
   };
 
   /**
@@ -117,9 +123,11 @@ const useGameLogic = ({ isActive, soundLevel }: TrafficLightProps) => {
    */
   const resetGlobalCounter = () => {
     clearInterval(globalTimerId.current as number);
-    globalTimerId.current = setInterval(() => {
-      setElapsedTime((prevElapsedTime) => prevElapsedTime + 1);
-    }, 1000);
+    if (isActive && trafficLightColor === "green") {
+      globalTimerId.current = setInterval(() => {
+        setElapsedTime((prevElapsedTime) => prevElapsedTime + 1);
+      }, 1000);
+    }
   };
 
   return {
