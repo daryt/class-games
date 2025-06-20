@@ -1,0 +1,12 @@
+{
+  "buildpacks": [
+    { "url": "heroku-community/nginx" },
+    { "url": "heroku/nodejs" }
+  ],
+  "env": {
+    /* any config-vars you need */
+  },
+  "scripts": {
+    "postdeploy": "echo Review app deployed"
+  }
+}
