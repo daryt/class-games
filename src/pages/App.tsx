@@ -56,7 +56,6 @@ const App = () => {
   // Sets timer/stopwatch
   const toggleTimer = () => {
     setIsTimer(!isTimer);
-    reset();
   };
 
   useEffect(() => {
