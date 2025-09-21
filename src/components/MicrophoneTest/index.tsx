@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Flex,
   Button,
@@ -214,12 +214,18 @@ const MicrophoneTest = ({
     }
   };
 
-  const stopCalibrationRecording = () => {
+  const stopCalibrationRecording = useCallback(() => {
     if (startedRecordingForCalibration.current) {
       stopRecording();
       startedRecordingForCalibration.current = false;
     }
-  };
+  }, [stopRecording]);
+
+  const stopCalibrationRecordingRef = useRef(stopCalibrationRecording);
+
+  useEffect(() => {
+    stopCalibrationRecordingRef.current = stopCalibrationRecording;
+  }, [stopCalibrationRecording]);
 
   useEffect(() => {
     if (isCalibrating) {
@@ -230,9 +236,9 @@ const MicrophoneTest = ({
   useEffect(() => {
     return () => {
       clearCalibrationTimers();
-      stopCalibrationRecording();
+      stopCalibrationRecordingRef.current();
     };
-  }, [stopRecording]);
+  }, []);
 
   const handlePresetClick = async (preset: NoisePresetKey) => {
     if (isCalibrating) {
