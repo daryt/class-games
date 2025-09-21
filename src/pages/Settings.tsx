@@ -21,6 +21,7 @@ import Header from "../components/Header/index";
 import { useSettingsContext } from "../context/settingsContext";
 import MicrophoneTest from "../components/MicrophoneTest";
 import useLocalStorage from "../hooks/useLocalStorage";
+import { CalibrationSummary } from "../types/noisePresets";
 
 interface IFormValues {
   addPoints: number;
@@ -36,11 +37,16 @@ interface IFormValues {
   isDebug: boolean;
   soundDelay: number;
   timer: number;
+  calibrationSummary?: CalibrationSummary | null;
 }
 
 interface ISettings {
   readonly formValues: IFormValues;
   readonly handleChange: (event: any) => void;
+}
+
+interface ThresholdSettingsProps extends ISettings {
+  readonly onPresetApplied: (summary: CalibrationSummary) => void;
 }
 
 const PointSettings = ({ formValues, handleChange }: ISettings) => (
@@ -206,7 +212,11 @@ const SoundSettings = ({ formValues, handleChange }: ISettings) => (
   </>
 );
 
-const ThresholdSettings = ({ formValues, handleChange }: ISettings) => (
+const ThresholdSettings = ({
+  formValues,
+  handleChange,
+  onPresetApplied,
+}: ThresholdSettingsProps) => (
   <>
     <Text fontSize="xl" fontWeight="bold">
       Threshold Settings
@@ -238,7 +248,10 @@ const ThresholdSettings = ({ formValues, handleChange }: ISettings) => (
         required
       />
     </FormControl>
-    <MicrophoneTest />
+    <MicrophoneTest
+      onPresetApplied={onPresetApplied}
+      calibrationSummary={formValues.calibrationSummary ?? null}
+    />
   </>
 );
 
@@ -283,6 +296,7 @@ const Settings = () => {
     isDebug,
     soundDelay,
     timer,
+    calibrationSummary,
   } = settings;
 
   const [formValues, setFormValues] = useState({
@@ -299,6 +313,7 @@ const Settings = () => {
     isDebug,
     soundDelay,
     timer,
+    calibrationSummary,
   });
 
   // Method to determine when the form has been modified.
@@ -309,7 +324,10 @@ const Settings = () => {
     );
   });
 
-  const isFormEmptyOrNull = Object.values(formValues).some((value) => {
+  const isFormEmptyOrNull = Object.entries(formValues).some(([key, value]) => {
+    if (key === "calibrationSummary") {
+      return false;
+    }
     return value === null || value === "";
   });
 
@@ -320,6 +338,19 @@ const Settings = () => {
       ...prevValues,
       [name]: parsedValue,
     }));
+  };
+
+  const handlePresetApplied = (summary: CalibrationSummary) => {
+    setFormValues((prevValues) => {
+      const updatedValues = {
+        ...prevValues,
+        yellowMinDec: summary.yellow,
+        redMinDec: summary.red,
+        calibrationSummary: summary,
+      };
+      setValue(updatedValues);
+      return updatedValues;
+    });
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -377,6 +408,7 @@ const Settings = () => {
                 <ThresholdSettings
                   formValues={formValues}
                   handleChange={handleChange}
+                  onPresetApplied={handlePresetApplied}
                 />
               </Box>
               <Box>
