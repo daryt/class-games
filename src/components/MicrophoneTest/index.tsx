@@ -35,22 +35,22 @@ const PRESETS: Record<
 > = {
   whisper: {
     label: "Whisper",
-    yellowOffset: 6,
-    redOffset: 12,
+    yellowOffset: 9,
+    redOffset: 18,
     yellowClamp: { min: 10, max: 90 },
     redClamp: { min: 15, max: 95 },
   },
   partner: {
     label: "Partner",
-    yellowOffset: 12,
-    redOffset: 20,
+    yellowOffset: 15,
+    redOffset: 24,
     yellowClamp: { min: 15, max: 90 },
     redClamp: { min: 20, max: 95 },
   },
   group: {
     label: "Group",
-    yellowOffset: 18,
-    redOffset: 28,
+    yellowOffset: 22,
+    redOffset: 32,
     yellowClamp: { min: 20, max: 92 },
     redClamp: { min: 28, max: 96 },
   },
