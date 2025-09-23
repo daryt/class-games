@@ -22,6 +22,7 @@ interface MicrophoneTestProps {
 }
 
 const CALIBRATION_DURATION = 10;
+const SAMPLE_INTERVAL_MS = 100;
 
 const PRESETS: Record<
   NoisePresetKey,
@@ -193,6 +194,7 @@ const MicrophoneTest = ({
 
   const countdownIntervalRef = useRef<number | null>(null);
   const calibrationTimeoutRef = useRef<number | null>(null);
+  const calibrationSamplingIntervalRef = useRef<number | null>(null);
   const startedRecordingForCalibration = useRef(false);
   const samplesRef = useRef<number[]>([]);
 
@@ -203,6 +205,8 @@ const MicrophoneTest = ({
     return clamp(Math.round(soundLevel), 0, 100);
   }, [soundLevel]);
 
+  const latestNormalizedLevelRef = useRef(normalizedLevel);
+
   const clearCalibrationTimers = () => {
     if (countdownIntervalRef.current) {
       window.clearInterval(countdownIntervalRef.current);
@@ -211,6 +215,10 @@ const MicrophoneTest = ({
     if (calibrationTimeoutRef.current) {
       window.clearTimeout(calibrationTimeoutRef.current);
       calibrationTimeoutRef.current = null;
+    }
+    if (calibrationSamplingIntervalRef.current) {
+      window.clearInterval(calibrationSamplingIntervalRef.current);
+      calibrationSamplingIntervalRef.current = null;
     }
   };
 
@@ -228,10 +236,26 @@ const MicrophoneTest = ({
   }, [stopCalibrationRecording]);
 
   useEffect(() => {
-    if (isCalibrating) {
-      samplesRef.current.push(normalizedLevel);
+    latestNormalizedLevelRef.current = normalizedLevel;
+  }, [normalizedLevel]);
+
+  useEffect(() => {
+    if (!isCalibrating) {
+      return;
     }
-  }, [normalizedLevel, isCalibrating]);
+
+    samplesRef.current.push(latestNormalizedLevelRef.current);
+    calibrationSamplingIntervalRef.current = window.setInterval(() => {
+      samplesRef.current.push(latestNormalizedLevelRef.current);
+    }, SAMPLE_INTERVAL_MS);
+
+    return () => {
+      if (calibrationSamplingIntervalRef.current) {
+        window.clearInterval(calibrationSamplingIntervalRef.current);
+        calibrationSamplingIntervalRef.current = null;
+      }
+    };
+  }, [isCalibrating]);
 
   useEffect(() => {
     return () => {
