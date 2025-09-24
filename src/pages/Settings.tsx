@@ -8,7 +8,6 @@ import {
   Input,
   Text,
   Grid,
-  Link,
   Slider,
   SliderTrack,
   SliderFilledTrack,
@@ -424,15 +423,7 @@ const Settings = () => {
               </Box>
             </Grid>
             <Box marginTop="1rem">
-              <Link
-                fontSize="sm"
-                color="teal.500"
-                href="https://www.cdc.gov/nceh/hearing_loss/what_noises_cause_hearing_loss.html"
-                isExternal
-              >
-                Decibel Hearing Chart
-              </Link>
-              <Text fontSize="xs" color="gray.500" marginTop=".5rem">
+              <Text fontSize="xs" color="gray.500">
                 Please note that the accuracy of the decibel readings provided
                 by this application may be affected by the quality of your
                 device's microphone.
