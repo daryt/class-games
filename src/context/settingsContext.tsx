@@ -1,6 +1,7 @@
 import { createContext, useState, ReactNode, useMemo, useContext } from "react";
 import useLocalStorage from "../hooks/useLocalStorage";
 import initialSettings from "../settings.json";
+import { CalibrationSummary } from "../types/noisePresets";
 
 // Settings Interface
 interface ISettings {
@@ -17,6 +18,7 @@ interface ISettings {
   readonly isDebug: boolean;
   readonly soundDelay: number;
   readonly timer: number;
+  readonly calibrationSummary?: CalibrationSummary | null;
 }
 
 // Define the shape of the user details state

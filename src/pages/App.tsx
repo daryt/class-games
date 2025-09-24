@@ -277,9 +277,22 @@ const App = () => {
               m="0 auto"
             >
               {settings.isDebug && (
-                <Text fontSize={{ base: "2xl", md: "3xl" }} textAlign="center">
-                  Sound: {soundLevel.toFixed(0)}
-                </Text>
+                <VStack spacing={1} align="center">
+                  <Text
+                    fontSize={{ base: "2xl", md: "3xl" }}
+                    textAlign="center"
+                  >
+                    Sound: {soundLevel.toFixed(0)}
+                  </Text>
+                  {settings.calibrationSummary && (
+                    <Text
+                      fontSize={{ base: "md", md: "lg" }}
+                      textAlign="center"
+                    >
+                      {`B ${settings.calibrationSummary.baseline} | P80 ${settings.calibrationSummary.p80} | Y ${settings.calibrationSummary.yellow} | R ${settings.calibrationSummary.red}`}
+                    </Text>
+                  )}
+                </VStack>
               )}
             </Flex>
           </VStack>
