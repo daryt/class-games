@@ -331,8 +331,19 @@ const Settings = () => {
   });
 
   const handleChange = (event: any) => {
-    const { name, value } = event.target;
-    const parsedValue = /^\d+$/.test(value) ? parseInt(value, 10) : value;
+    const { name, value, type } = event.target;
+
+    let parsedValue = value;
+
+    if (value === "") {
+      parsedValue = value;
+    } else if (typeof value === "number") {
+      parsedValue = value;
+    } else if (type === "number") {
+      const numericValue = Number(value);
+      parsedValue = Number.isNaN(numericValue) ? value : numericValue;
+    }
+
     setFormValues((prevValues) => ({
       ...prevValues,
       [name]: parsedValue,
