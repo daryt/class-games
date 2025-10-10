@@ -36,22 +36,22 @@ const PRESETS: Record<
 > = {
   whisper: {
     label: "Whisper",
-    yellowOffset: 9,
-    redOffset: 18,
+    yellowOffset: 11,
+    redOffset: 22,
     yellowClamp: { min: 10, max: 90 },
     redClamp: { min: 15, max: 95 },
   },
   partner: {
     label: "Partner",
-    yellowOffset: 15,
-    redOffset: 24,
+    yellowOffset: 17,
+    redOffset: 28,
     yellowClamp: { min: 15, max: 90 },
     redClamp: { min: 20, max: 95 },
   },
   group: {
     label: "Group",
-    yellowOffset: 22,
-    redOffset: 32,
+    yellowOffset: 24,
+    redOffset: 36,
     yellowClamp: { min: 20, max: 92 },
     redClamp: { min: 28, max: 96 },
   },
@@ -140,11 +140,11 @@ const calculateThresholds = (
   if (p80 - baseline < 6) {
     yellow = Math.max(
       yellow,
-      clamp(baseline + 8, config.yellowClamp.min, config.yellowClamp.max)
+      clamp(baseline + 10, config.yellowClamp.min, config.yellowClamp.max)
     );
     red = Math.max(
       red,
-      clamp(baseline + 16, config.redClamp.min, config.redClamp.max)
+      clamp(baseline + 20, config.redClamp.min, config.redClamp.max)
     );
   }
 
